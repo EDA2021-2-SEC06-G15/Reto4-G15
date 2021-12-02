@@ -34,6 +34,16 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
+# ___________________________________________________
+#  Variables
+# ___________________________________________________
+
+
+airportsfile = 'airports_full.csv'
+routesfile = 'routes_full.csv'
+citiesfile = 'worldcities.csv'
+initialStation = None
+
 def printMenu():
     print("Bienvenido")
     print("1- Iniciar Analizador")
@@ -45,6 +55,15 @@ def printMenu():
     print("7- Cuantificar el efecto de un aeropuerto cerrado")
     print("8- Comparar con servicio WEB externo")
 
+
+def optionTwo(cont):
+    print("\nCargando información de transporte aéreo ....")
+    controller.loadAirports(cont, airportsfile)
+    #controller.loadRoutes(cont, routesfile)
+    controller.loadCities(cont, citiesfile)
+    
+
+
 catalog = None
 
 """
@@ -55,9 +74,11 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        # cont es el controlador que se usará de acá en adelante
+        cont = controller.init()
 
     elif int(inputs[0]) == 2:
-        pass
+        optionTwo(cont)
 
     elif int(inputs[0]) == 3:
         pass
