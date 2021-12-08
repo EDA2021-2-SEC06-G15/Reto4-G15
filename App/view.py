@@ -58,9 +58,11 @@ def printMenu():
 
 def optionTwo(cont):
     print("\nCargando información de transporte aéreo ....")
-    controller.loadAirports(cont, airportsfile)
-    #controller.loadRoutes(cont, routesfile)
-    controller.loadCities(cont, citiesfile)
+    
+    controller.loadRoutes(cont, airportsfile, routesfile)
+    
+    
+    
     
 
 
