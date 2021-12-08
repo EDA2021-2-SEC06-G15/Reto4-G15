@@ -90,7 +90,7 @@ def loadRoutes(analyzer, airportsfile, routesfile):
     servicesfile2 = cf.data_dir + routesfile
     input_file2 = csv.DictReader(open(servicesfile2, encoding="utf-8"),
                                 delimiter=",")
-    for airport in input_file:
+    for airport in input_file2:
         if gr.getEdge(graph, airport['Departure'],airport['Destination']) is None:
             gr.addEdge(graph, airport['Departure'], airport['Destination'], airport['distance_km'])
 
