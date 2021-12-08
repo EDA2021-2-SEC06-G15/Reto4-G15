@@ -19,11 +19,12 @@
  * You should have received a copy of the GNU General Public License
  * along withthis program.  If not, see <http://www.gnu.org/licenses/>.
  """
-from DISClib.ADT import orderedmap as om
+
 import config as cf
 import model
 import csv
 from DISClib.ADT.graph import gr
+from DISClib.ADT import orderedmap as om
 
 
 """
@@ -85,7 +86,7 @@ def loadRoutes(analyzer, airportsfile, routesfile):
     for airport in input_file:
         esta = gr.containsVertex(graph, airport['IATA'])
         if not esta:
-            gr.insertVertex(graph, airport)
+            gr.insertVertex(graph, airport['IATA'])
     
     servicesfile2 = cf.data_dir + routesfile
     input_file2 = csv.DictReader(open(servicesfile2, encoding="utf-8"),
@@ -94,8 +95,15 @@ def loadRoutes(analyzer, airportsfile, routesfile):
         if gr.getEdge(graph, airport['Departure'],airport['Destination']) is None:
             gr.addEdge(graph, airport['Departure'], airport['Destination'], airport['distance_km'])
 
+    countgraphvalues(graph)
 
+def countgraphvalues (graph):
+    verts = gr.numVertices(graph)
+    arcs = gr.numEdges(graph)
 
+    print("El grafo cargado cuenta con " + str(verts) + " vertices y " + str(arcs) + " arcos.")
+
+    print(gr.vertices(graph))
 
         
 

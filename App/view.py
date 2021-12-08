@@ -39,8 +39,8 @@ operación solicitada
 # ___________________________________________________
 
 
-airportsfile = 'airports_full.csv'
-routesfile = 'routes_full.csv'
+airportsfile = 'airports-utf8-5pct.csv'
+routesfile = 'routes-utf8-5pct.csv'
 citiesfile = 'worldcities.csv'
 initialStation = None
 
@@ -61,8 +61,10 @@ def optionTwo(cont):
     
     controller.loadRoutes(cont, airportsfile, routesfile)
     
-    
-    
+
+
+
+
     
 
 
