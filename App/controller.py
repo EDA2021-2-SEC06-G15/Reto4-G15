@@ -103,7 +103,6 @@ def countgraphvalues (graph):
 
     print("El grafo cargado cuenta con " + str(verts) + " vertices y " + str(arcs) + " arcos.")
 
-    print(gr.vertices(graph))
 
         
 
