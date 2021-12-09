@@ -60,10 +60,18 @@ def optionTwo(cont):
     print("\nCargando información de transporte aéreo ....")
     
     controller.loadRoutes(cont, airportsfile, routesfile)
+    controller.loadAirports(cont, airportsfile)
+    controller.loadCities(cont, citiesfile)
+    controller.loadNames(cont, airportsfile)
     
+def optionThree(analyzer):
+    controller.puntosInterconexion(analyzer)
 
+def optionFour(cont, verta, vertb):
+    controller.clusteres(cont, verta, vertb)
 
-
+def optionFive(cont, verta,vertb):
+    controller.caminoMasCorto(cont, verta,vertb)
 
     
 
@@ -85,13 +93,18 @@ while True:
         optionTwo(cont)
 
     elif int(inputs[0]) == 3:
-        pass
+        print("Encontrando puntos de interconexión aérea ....")
+        optionThree(cont)
 
     elif int(inputs[0]) == 4:
-        pass
+        verta = input("Ingrese el codigo IATA 1: ")
+        vertb = input("Ingrese el codigo IATA 2: ")
+        optionFour(cont, verta, vertb)
 
     elif int(inputs[0]) == 5:
-        pass
+        verta = input("Ingrese la ciudad de origen: ")
+        vertb = input("Ingrese la ciudad de destino: ")
+        optionFive(cont, verta,vertb)
 
     elif int(inputs[0]) == 6:
         pass

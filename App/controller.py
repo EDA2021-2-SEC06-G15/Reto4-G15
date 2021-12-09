@@ -53,8 +53,18 @@ def loadAirports(analyzer, airportsfile):
                                 delimiter=",")
     for avistamiento in input_file:
         model.addAirport(analyzer, avistamiento)
+    
+def loadNames(analyzer, airportsfile):
+    """
+    Carga los datos de los archivos CSV en el modelo
+    """
+    airportsfile = cf.data_dir + airportsfile
+    input_file = csv.DictReader(open(airportsfile, encoding="utf-8"),
+                                delimiter=",")
+    for avistamiento in input_file:
+        model.addName(analyzer, avistamiento)
 
-    print("Cantidad de aeropuertos: " + str(om.size(analyzer['airports'])))
+    
     return analyzer
 
 def loadCities(analyzer, citiesfile):
@@ -102,7 +112,19 @@ def countgraphvalues (graph):
     verts = gr.numVertices(graph)
     arcs = gr.numEdges(graph)
 
-    print("El grafo cargado cuenta con " + str(verts) + " vertices y " + str(arcs) + " arcos.")
+    print("Aeropuertos cargados: " + str(verts))
+    print("Rutas aereas cargadas: " + str(arcs))
+
+
+
+def puntosInterconexion(cont):
+    model.puntosInterconexion(cont)
+
+def clusteres(cont, verta, vertb):
+    model.clusteres(cont, verta, vertb)
+
+def caminoMasCorto(cont, verta, vertb):
+    model.caminoMasCorto(cont, verta, vertb)
  
 
         
