@@ -97,12 +97,13 @@ def loadRoutes(analyzer, airportsfile, routesfile):
 
     countgraphvalues(graph)
 
+
 def countgraphvalues (graph):
     verts = gr.numVertices(graph)
     arcs = gr.numEdges(graph)
 
     print("El grafo cargado cuenta con " + str(verts) + " vertices y " + str(arcs) + " arcos.")
-
+ 
 
         
 

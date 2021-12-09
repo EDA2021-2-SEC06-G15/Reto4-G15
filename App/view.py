@@ -39,8 +39,8 @@ operación solicitada
 # ___________________________________________________
 
 
-airportsfile = 'airports-utf8-5pct.csv'
-routesfile = 'routes-utf8-5pct.csv'
+airportsfile = 'airports-utf8-small.csv'
+routesfile = 'routes-utf8-small.csv'
 citiesfile = 'worldcities.csv'
 initialStation = None
 
