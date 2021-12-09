@@ -56,7 +56,8 @@ def newAnalyzer():
         analyzer = {
                     'airports': None,
                     'connections': None,
-                    'cities': None
+                    'cities': None,
+                    'components': None
                     }
 
         analyzer['airports'] = om.newMap(omaptype='BST')
@@ -77,8 +78,6 @@ def addCity(analyzer, city):
     updateCity(analyzer['cities'], city)
     return analyzer
 
-
-
 def updateCity(map, city):
     """
     Se toma la ciudad y se busca si ya existe en el arbol dicha 
@@ -95,91 +94,91 @@ def updateCity(map, city):
         pass
     return map
 
-def addStopConnection(analyzer, lastservice, service):
-    """
-    Adiciona las estaciones al grafo como vertices y arcos entre las
-    estaciones adyacentes.
 
-    Los vertices tienen por nombre el identificador de la estacion
-    seguido de la ruta que sirve.  Por ejemplo:
-
-    75009-10
-
-    Si la estacion sirve otra ruta, se tiene: 75009-101
-    """
-    try:
-        origin = formatVertex(lastservice)
-        destination = formatVertex(service)
-        cleanServiceDistance(lastservice, service)
-        distance = float(service['distance_km']) - float(lastservice['distance_km'])
-        distance = abs(distance)
-        addStop(analyzer, origin)
-        addStop(analyzer, destination)
-        addConnection(analyzer, origin, destination, distance)
-        
-        
-        return analyzer
-    except Exception as exp:
-        error.reraise(exp, 'model:addStopConnection')
-    
-def addStop(analyzer, stopid):
-    """
-    Adiciona una estación como un vertice del grafo
-    """
-    try:
-        if not gr.containsVertex(analyzer['connections'], stopid):
-            gr.insertVertex(analyzer['connections'], stopid)
-        return analyzer
-    except Exception as exp:
-        error.reraise(exp, 'model:addstop')
-
-def addConnection(analyzer, origin, destination, distance):
-    """
-    Adiciona un arco entre dos estaciones
-    """
-    edge = gr.getEdge(analyzer['connections'], origin, destination)
-    if edge is None:
-        gr.addEdge(analyzer['connections'], origin, destination, distance)
+def addAirport(analyzer, city):
+    updateAirport(analyzer['cities'], city)
     return analyzer
 
-def addRouteStop(analyzer, service):
+def updateAirport(map, airport):
     """
-    Agrega a una estacion, una ruta que es servida en ese paradero
+    Se toma el aeropuerto y se busca si ya existe en el arbol dicha 
+    ciudad. Si no se encuentra creado un nodo para esa ciudad 
+    en el arbol se crea y se actualiza el indice de datos de la ciudad
     """
-    
-    entry = m.get(analyzer['stops'], service['IATA'])
+    occurredcity = airport['IATA']
+    entry = om.get(map, occurredcity)
+        
     if entry is None:
-        
-        m.put(analyzer['stops'], service['IATA'], service['distance_km'])
+        cityentry = airport
+        om.put(map, occurredcity, cityentry)
     else:
-        lstroutes = entry['value']
-        info = service['distance_km']
-        if not lt.isPresent(lstroutes, info):
-            lt.addLast(lstroutes, info)
-    return analyzer
+        pass
+    
+    return map
 
-def addRouteConnections(analyzer):
-    """
-    Por cada vertice (cada estacion) se recorre la lista
-    de rutas servidas en dicha estación y se crean
-    arcos entre ellas para representar el cambio de ruta
-    que se puede realizar en una estación.
-    """
-    lststops = m.keySet(analyzer['airports'])
-    for key in lt.iterator(lststops):
-        lstroutes = m.get(analyzer['airports'], key)['IATA']
-        prevrout = None
-        for route in lt.iterator(lstroutes):
-            route = key + '-' + route
-            if prevrout is not None:
-                addConnection(analyzer, prevrout, route, 0)
-                addConnection(analyzer, route, prevrout, 0)
-            prevrout = route
+
+
+
+
+
+
+    
+    
 
 
 # Funciones para creacion de datos
 
 # Funciones de consulta
+
+def puntosInterconexion(cont):
+    vertices = gr.vertices(cont['connections'])
+    
+    mayor = 0
+    aeropuerto = None
+    print(vertices)
+
+    for v in lt.iterator(vertices):
+        print(v)
+        if v is not None:
+            grado = float(gr.degree(cont['connections'],v))
+        if grado > mayor:
+            mayor = grado
+            aeropuerto = v
+        
+    print("El aeropuerto con más conecciones es: " + str(aeropuerto) + ". Con: " + str (mayor) + "conecciones")
+    print(str(gr.outdegree(cont['connections'], aeropuerto)))
+    print(str(gr.indegree(cont['connections'], aeropuerto)))
+
+def connectedComponents(analyzer):
+    """
+    Calcula los componentes conectados del grafo
+    Se utiliza el algoritmo de Kosaraju
+    """
+    analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
+    ans = scc.connectedComponents(analyzer['components'])
+    print("El número de elementos conectados es de: " + str(ans))
+    return ans
+
+def clusteres(analyzer, verta, vertb):
+
+    connectedComponents(analyzer)
+
+    sccc = analyzer['components']
+    ans = scc.stronglyConnected(sccc, verta, vertb)
+
+    if ans == True:
+        print("Los aeropuertos están fuertemente conectados.")
+
+    else:
+        print("los aeropuertos NO están fuertemente conectados.")
+
+
+def caminoMasCorto(cont, verta, vertb):
+    pass
+    
+        
+        
+
 
 # Funciones Helper
 
