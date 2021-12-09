@@ -41,7 +41,7 @@ operación solicitada
 
 airportsfile = 'airports-utf8-small.csv'
 routesfile = 'routes-utf8-small.csv'
-citiesfile = 'worldcities.csv'
+citiesfile = 'worldcities-utf8.csv'
 initialStation = None
 
 def printMenu():

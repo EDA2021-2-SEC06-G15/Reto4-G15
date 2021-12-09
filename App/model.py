@@ -57,11 +57,14 @@ def newAnalyzer():
                     'airports': None,
                     'connections': None,
                     'cities': None,
-                    'components': None
+                    'names': None,
+                    'components': None,
+                    'paths': None
                     }
 
         analyzer['airports'] = om.newMap(omaptype='BST')
         analyzer['cities'] = om.newMap(omaptype='BST')
+        analyzer['names'] = om.newMap(omaptype='BST')
         analyzer['connections'] = gr.newGraph(datastructure='ADJ_LIST',
                                               directed=True,
                                               size=14000,
@@ -96,7 +99,7 @@ def updateCity(map, city):
 
 
 def addAirport(analyzer, city):
-    updateAirport(analyzer['cities'], city)
+    updateAirport(analyzer['airports'], city)
     return analyzer
 
 def updateAirport(map, airport):
@@ -106,6 +109,27 @@ def updateAirport(map, airport):
     en el arbol se crea y se actualiza el indice de datos de la ciudad
     """
     occurredcity = airport['IATA']
+    entry = om.get(map, occurredcity)
+        
+    if entry is None:
+        cityentry = airport
+        om.put(map, occurredcity, cityentry)
+    else:
+        pass
+    
+    return map
+
+def addName(analyzer, city):
+    updateName(analyzer['names'], city)
+    return analyzer
+
+def updateName(map, airport):
+    """
+    Se toma el aeropuerto y se busca si ya existe en el arbol dicha 
+    ciudad. Si no se encuentra creado un nodo para esa ciudad 
+    en el arbol se crea y se actualiza el indice de datos de la ciudad
+    """
+    occurredcity = airport['City']
     entry = om.get(map, occurredcity)
         
     if entry is None:
@@ -133,21 +157,29 @@ def updateAirport(map, airport):
 def puntosInterconexion(cont):
     vertices = gr.vertices(cont['connections'])
     
-    mayor = 0
+    
     aeropuerto = None
-    print(vertices)
+    
+    x = 1
+    n = 0
 
-    for v in lt.iterator(vertices):
-        print(v)
-        if v is not None:
-            grado = float(gr.degree(cont['connections'],v))
-        if grado > mayor:
-            mayor = grado
-            aeropuerto = v
-        
-    print("El aeropuerto con más conecciones es: " + str(aeropuerto) + ". Con: " + str (mayor) + "conecciones")
-    print(str(gr.outdegree(cont['connections'], aeropuerto)))
-    print(str(gr.indegree(cont['connections'], aeropuerto)))
+    while x <= 5:
+        mayor = 0
+        for v in lt.iterator(vertices):
+            if v is not None:
+                grado = float(gr.degree(cont['connections'],v))
+            if grado > mayor:
+                mayor = grado
+                aeropuerto = v
+                print(aeropuerto)
+                o  = gr.outdegree(cont['connections'], aeropuerto)
+                i = gr.indegree(cont['connections'], aeropuerto)
+                n = i + o
+        pos = lt.isPresent(vertices, aeropuerto)
+        lt.deleteElement(vertices, pos)
+        x +=1 
+        print("El aeropuerto " + str(aeropuerto) + ". Tiene " + str (n) + " conexiones")
+    
 
 def connectedComponents(analyzer):
     """
@@ -174,7 +206,28 @@ def clusteres(analyzer, verta, vertb):
 
 
 def caminoMasCorto(cont, verta, vertb):
-    pass
+    
+    IATA1 = findIATA(cont, verta)
+    IATA2 = findIATA(cont, vertb)
+
+    cont['paths'] = djk.Dijkstra(cont['connections'], IATA1)
+    path = djk.pathTo(cont['paths'], IATA2)
+    return path
+
+    
+
+def findIATA(cont, ciudad):
+    arbol = cont['names']
+    keys = m.keySet(arbol)
+    values = m.valueSet(arbol)
+
+    pos = lt.isPresent(keys, ciudad)
+    lst = lt.getElement(values, pos)
+
+    IATA = lst['IATA']
+
+    return IATA
+
     
         
         
