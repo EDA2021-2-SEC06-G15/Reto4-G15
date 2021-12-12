@@ -103,7 +103,7 @@ def loadRoutes(analyzer, airportsfile, routesfile):
                                 delimiter=",")
     for airport in input_file2:
         if gr.getEdge(graph, airport['Departure'],airport['Destination']) is None:
-            gr.addEdge(graph, airport['Departure'], airport['Destination'], airport['distance_km'])
+            gr.addEdge(graph, airport['Departure'], airport['Destination'], float(airport['distance_km']))
 
     countgraphvalues(graph)
 
@@ -126,7 +126,11 @@ def clusteres(cont, verta, vertb):
 def caminoMasCorto(cont, verta, vertb):
     model.caminoMasCorto(cont, verta, vertb)
  
+def Millas(cont, city, km):
+    model.Millas(cont, city, km)
 
+def cerrado(cont, aeropuerto):
+    model.cerrado(cont, aeropuerto)
         
 
 

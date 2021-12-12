@@ -25,6 +25,8 @@ import sys
 import controller
 from DISClib.ADT import list as lt
 assert cf
+from DISClib.ADT import orderedmap as om
+from DISClib.ADT import map as m
 
 
 """
@@ -45,6 +47,7 @@ citiesfile = 'worldcities-utf8.csv'
 initialStation = None
 
 def printMenu():
+    print("\n//////////")
     print("Bienvenido")
     print("1- Iniciar Analizador")
     print("2- Cargar información de la red de Transporte aéreo")
@@ -59,10 +62,66 @@ def printMenu():
 def optionTwo(cont):
     print("\nCargando información de transporte aéreo ....")
     
-    controller.loadRoutes(cont, airportsfile, routesfile)
-    controller.loadAirports(cont, airportsfile)
-    controller.loadCities(cont, citiesfile)
-    controller.loadNames(cont, airportsfile)
+    controller.loadRoutes(cont, airportsfile, routesfile) #Grafo
+    controller.loadAirports(cont, airportsfile) #Árbol Codigo IATA
+    controller.loadCities(cont, citiesfile) #Árbol Tipos de Ciudades
+    controller.loadNames(cont, airportsfile) #Árbol Nombre de la Ciudad
+
+    grafo = cont['airports']
+    llavesgrafo = om.keySet(grafo)
+    first = om.get(grafo, lt.firstElement(llavesgrafo))
+    last = om.get(grafo, lt.lastElement(llavesgrafo))
+    
+    aiatai = first["key"]
+    nombrei = first["value"]["Name"]
+    ciudadi = first["value"]["City"]
+    paisi = first["value"]["Country"]
+    latitudi = first["value"]["Latitude"]
+    longitudi = first["value"]["Longitude"]
+
+    aiataf = last["key"]
+    nombref = last["value"]["Name"]
+    ciudadf = last["value"]["City"]
+    paisf = last["value"]["Country"]
+    latitudf = last["value"]["Latitude"]
+    longitudf = last["value"]["Longitude"]
+
+    print("\nPrimer aeropuerto cargado")
+    print("\nAeropuerto " + str(nombrei) +" (" + str(aiatai) + ").")
+    print("Ubicación: " + str(ciudadi) + ", " + str(paisi) + ".")
+    print("Latitud: " + str(latitudi) + ", Longitud" + str(longitudi) + ".")
+    print("\nUltimo aeropuerto cargado")
+    print("\nAeropuerto " + str(nombref) +" (" + str(aiataf) + ").")
+    print("Ubicación: " + str(ciudadf) + ", " + str(paisf) + ".")
+    print("Latitud: " + str(latitudf) + ", Longitud" + str(longitudf) + ".")
+
+    grafo = cont['cities']
+    llavesgrafo = om.keySet(grafo)
+    first = om.get(grafo, lt.firstElement(llavesgrafo))
+    last = om.get(grafo, lt.lastElement(llavesgrafo))
+
+    ciudadi = first["value"]["city"]
+    paisi = first["value"]["country"]
+    latitudi = first["value"]["lat"]
+    longitudi = first["value"]["lng"]
+    poblacioni = first["value"]["population"]
+
+    ciudadf = last["value"]["city"]
+    paisf = last["value"]["country"]
+    latitudf = last["value"]["lat"]
+    longitudf = last["value"]["lng"]
+    poblacionf = last["value"]["population"]
+
+    print("\nPrimera ciudad cargada")
+    print(str(ciudadi) + ", " + str(paisi) + ".")
+    print("Latitud: " + str(latitudi) + ", Longitud" + str(longitudi) + ".")
+    print("Población: " + str(poblacioni))
+    print("\nUltima ciudad cargada")
+    print(str(ciudadf) + ", " + str(paisf) + ".")
+    print("Latitud: " + str(latitudf) + ", Longitud" + str(longitudf) + ".")
+    print("Población: " + str(poblacionf))
+
+
     
 def optionThree(analyzer):
     controller.puntosInterconexion(analyzer)
@@ -72,6 +131,15 @@ def optionFour(cont, verta, vertb):
 
 def optionFive(cont, verta,vertb):
     controller.caminoMasCorto(cont, verta,vertb)
+
+def optionSix(cont, city, km):
+    controller.Millas(cont, city, km)
+
+def optionSeven(cont, aeropuerto):
+    controller.cerrado(cont, aeropuerto)
+
+
+
 
     
 
@@ -107,10 +175,14 @@ while True:
         optionFive(cont, verta,vertb)
 
     elif int(inputs[0]) == 6:
-        pass
+        city = input("Ingrese la ciudad de origen: ")
+        millas = input("Ingrese la cantidad de millas disponibles: ")
+        km = float(millas)*1.60
+        optionSix(cont, city, km)
 
     elif int(inputs[0]) == 7:
-        pass
+        aeropuerto = input("Ingrese el codigo IATA: ")
+        optionSeven(cont, aeropuerto)
 
     elif int(inputs[0]) == 8:
         pass

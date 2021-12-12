@@ -31,6 +31,7 @@ from DISClib.ADT import map as m
 from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 from DISClib.Algorithms.Graphs import scc
+from DISClib.ADT import queue as q
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Graphs import dijsktra as djk
 from DISClib.Utils import error as error
@@ -155,8 +156,7 @@ def updateName(map, airport):
 # Funciones de consulta
 
 def puntosInterconexion(cont):
-    vertices = gr.vertices(cont['connections'])
-    
+    vertices = gr.vertices(cont['connections'])  
     
     aeropuerto = None
     
@@ -171,14 +171,24 @@ def puntosInterconexion(cont):
             if grado > mayor:
                 mayor = grado
                 aeropuerto = v
-                print(aeropuerto)
                 o  = gr.outdegree(cont['connections'], aeropuerto)
                 i = gr.indegree(cont['connections'], aeropuerto)
                 n = i + o
+                
+
+                
         pos = lt.isPresent(vertices, aeropuerto)
         lt.deleteElement(vertices, pos)
+        airport = om.get(cont['airports'], aeropuerto)
+        nombre = airport["value"]["Name"]
+        ciudad = airport["value"]["City"]
+        pais = airport["value"]["Country"]
+
         x +=1 
-        print("El aeropuerto " + str(aeropuerto) + ". Tiene " + str (n) + " conexiones")
+        print("\nEl aeropuerto " + str(nombre) +"(" + str(aeropuerto) + ")" + ". Tiene " + str (n) + " conexiones.")
+        print("Ubicación: " + str(ciudad) + ", " + str(pais) + ".")
+        print("Conexiones de entrada: " + str(i))
+        print("Conexiones de salida: " + str(o))
     
 
 def connectedComponents(analyzer):
@@ -188,7 +198,8 @@ def connectedComponents(analyzer):
     """
     analyzer['components'] = scc.KosarajuSCC(analyzer['connections'])
     ans = scc.connectedComponents(analyzer['components'])
-    print("El número de elementos conectados es de: " + str(ans))
+    
+    print("\nEl número de elementos conectados o clusters es de: " + str(ans))
     return ans
 
 def clusteres(analyzer, verta, vertb):
@@ -198,28 +209,128 @@ def clusteres(analyzer, verta, vertb):
     sccc = analyzer['components']
     ans = scc.stronglyConnected(sccc, verta, vertb)
 
+    airport = om.get(analyzer['airports'], verta)
+    nombre = airport["value"]["Name"]
+    ciudad = airport["value"]["City"]
+    pais = airport["value"]["Country"]
+
+    print("\nAEROPUERTOS INGRESADOS: ")
+    print("\nNombre: " + str(nombre))
+    print("Codigo IATA: " + str(verta))
+    print("Ciudad: " + str(ciudad))
+    print("Pais: " + str(pais))
+
+    airport = om.get(analyzer['airports'], vertb)
+    nombre = airport["value"]["Name"]
+    ciudad = airport["value"]["City"]
+    pais = airport["value"]["Country"]
+
+    print("\nNombre: " + str(nombre))
+    print("Codigo IATA: " + str(vertb))
+    print("Ciudad: " + str(ciudad))
+    print("Pais: " + str(pais))
+
     if ans == True:
-        print("Los aeropuertos están fuertemente conectados.")
+        print("\nLos aeropuertos ingresados están fuertemente conectados.")
 
     else:
-        print("los aeropuertos NO están fuertemente conectados.")
+        print("\nlos aeropuertos ingresados NO están fuertemente conectados.")
+    print("\n")
 
 
 def caminoMasCorto(cont, verta, vertb):
     
     IATA1 = findIATA(cont, verta)
     IATA2 = findIATA(cont, vertb)
-
+            
     cont['paths'] = djk.Dijkstra(cont['connections'], IATA1)
     path = djk.pathTo(cont['paths'], IATA2)
-    return path
-
+    trayecto = lt.newList()
     
+    size = q.size(path)
+    i=0
+    distancia = 0
+    print("\nLos aeropuertos presentes en el recorrido son los siguientes: ")
+    while i < size:
+        elm = q.dequeue(path)
+        distancia += float(elm['weight'])        
+        
+        iata = elm['vertexA']
+        lt.addLast(trayecto, iata)
+        airport = om.get(cont['airports'], iata)
+        nombre = airport["value"]["Name"]
+        ciudad = airport["value"]["City"]
+        pais = airport["value"]["Country"]
+
+        print("\nNombre: " + str(nombre))
+        print("Codigo IATA: " + str(iata))
+        print("Ciudad: " + str(ciudad))
+        print("Pais: " + str(pais))
+        i+=1
+
+    iata = IATA2
+    lt.addLast(trayecto, iata)
+    airport = om.get(cont['airports'], iata)
+    nombre = airport["value"]["Name"]
+    ciudad = airport["value"]["City"]
+    pais = airport["value"]["Country"]
+
+    print("\nNombre: " + str(nombre))
+    print("Codigo IATA: " + str(iata))
+    print("Ciudad: " + str(ciudad))
+    print("Pais: " + str(pais))
+
+    print("\nLa distancia total recorrida es de: " + str(distancia))
+    
+
+def DistanciaMasCorta(cont, verta, vertb):
+    
+    IATA1 = findIATA(cont, verta)
+    IATA2 = findIATA(cont, vertb)
+    
+        
+    cont['paths'] = djk.Dijkstra(cont['connections'], IATA1)
+    path = djk.pathTo(cont['paths'], IATA2)
+    
+    trayecto = lt.newList()
+    
+    size = q.size(path)
+    i=0
+    distancia = 0
+    while i<size:
+        elm = q.dequeue(path)
+        distancia += float(elm['weight'])
+        i+=1
+        lt.addLast(trayecto, elm['vertexA'])
+    return distancia
+    
+    
+def rutamascorta(cont, verta, vertb):
+    
+    IATA1 = findIATA(cont, verta)
+    IATA2 = findIATA(cont, vertb)
+    
+        
+    cont['paths'] = djk.Dijkstra(cont['connections'], IATA1)
+    path = djk.pathTo(cont['paths'], IATA2)
+    
+    trayecto = lt.newList()
+    
+    size = q.size(path)
+    i=0
+    distancia = 0
+    while i<size:
+        elm = q.dequeue(path)
+        distancia += float(elm['weight'])
+        i+=1
+        lt.addLast(trayecto, elm['vertexA'])
+    return trayecto
+
 
 def findIATA(cont, ciudad):
     arbol = cont['names']
-    keys = m.keySet(arbol)
-    values = m.valueSet(arbol)
+    keys = om.keySet(arbol)
+    values = om.valueSet(arbol)
 
     pos = lt.isPresent(keys, ciudad)
     lst = lt.getElement(values, pos)
@@ -228,9 +339,81 @@ def findIATA(cont, ciudad):
 
     return IATA
 
+
+def Millas(cont, city, km):
     
+    IATA = city
+    grafo = cont['connections']
+    distancia_total = 0
+    flag = True
+    verta = IATA
+    vertb = None
+    aeropuertos = lt.newList()
+    lt.addLast(aeropuertos, IATA)
+    
+    while flag:
+        distancia_act = 1000000000000000
+        adyacentes = gr.adjacents(grafo, verta)
+        
+        for v in lt.iterator(adyacentes):
+            distancia = hallardistancia(cont, verta, v)
+            if float(distancia) < float(distancia_act):
+                distancia_act = distancia
+                vertb = v
+        distancia_total += distancia_act
+        
+        distancia_regreso = DistanciaMasCorta(cont, verta, vertb)
+        
+        if float(distancia_total) + float(distancia_regreso) < float(km):
+            flag = True
+            lt.addLast(aeropuertos, vertb)
+        else:
+            flag = False
+        
+        verta = vertb
         
         
+    trayecto = rutamascorta(cont, IATA, vertb)
+    
+    for x in lt.iterator(trayecto):
+        lt.addLast(aeropuertos, x)
+    dis = distancia_total + distancia_regreso
+    print("Número de aeropuertos visitados es de: " + str(lt.size(aeropuertos)))
+    print("La distancia total es de: " +str(dis))
+    
+    
+
+def hallardistancia(cont, verta, vertb):
+    
+    grafo = cont['connections']
+    distancia = gr.getEdge(grafo, verta, vertb)
+    
+    return distancia['weight']
+
+def cerrado(cont, aeropuerto):
+    
+    grafo = cont['connections']
+    arcos = gr.adjacentEdges(grafo, aeropuerto)
+    size = lt.size(arcos)
+    aeropuertos = gr.adjacents(grafo, aeropuerto)
+    print("La cantidad de aeropuetos afectados es: " + str(size))
+
+    for n in lt.iterator(aeropuertos):
+
+        grafo = cont['airports']
+        airp = om.get(grafo, n)
+
+        aiatai = airp["key"]
+        nombrei = airp["value"]["Name"]
+        ciudadi = airp["value"]["City"]
+        paisi = airp["value"]["Country"]
+
+        print("\nAeropuerto " + str(nombrei) +" (" + str(aiatai) + ").")
+        print("Ubicación: " + str(ciudadi) + ", " + str(paisi) + ".")
+
+
+    
+ 
 
 
 # Funciones Helper
